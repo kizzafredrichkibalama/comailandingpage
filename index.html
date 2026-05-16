@@ -428,7 +428,9 @@ footer{
       <h2 class="capture-title">Join the waitlist</h2>
       <p class="capture-desc">Be among the first to access ComAI when we launch. We'll send you an exclusive early-access invite.</p>
 
-      <form id="interest-form" novalidate netlify>
+      <form id="interest-form" name="comai-waitlist" method="POST" data-netlify="true" netlify-honeypot="bot-field" novalidate>
+        <input type="hidden" name="form-name" value="comai-waitlist">
+        <p style="display:none;"><label>Don't fill this out if you're human: <input name="bot-field"></label></p>
         <div class="form-row">
           <div class="form-group">
             <label for="fname">First name <span aria-hidden="true" style="color:var(--brand-pink);">*</span></label>
@@ -591,30 +593,31 @@ footer{
 
     if(!fname){ alert('Please enter your first name.'); form.fname.focus(); return; }
     if(!lname){ alert('Please enter your last name.');  form.lname.focus(); return; }
-    if(!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
+    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
       alert('Please enter a valid email address.'); form.email.focus(); return;
     }
     if(!consent){ alert('Please agree to receive updates to continue.'); form.consent.focus(); return; }
 
-    // Simulate submission
     btn.disabled = true;
     btnText.textContent = 'Saving your spot…';
 
-    // Collect data (in a real scenario, POST to an API)
-    const data = {
-      firstName: fname,
-      lastName:  lname,
-      email:     email,
-      role:      form.role.value,
-      idea:      form.idea.value.trim(),
-      timestamp: new Date().toISOString()
-    };
-    console.log('Interest captured:', JSON.stringify(data, null, 2));
+    const formData = new FormData(form);
 
-    setTimeout(()=>{
-      formContainer.style.display = 'none';
-      successState.style.display  = 'block';
-    }, 900);
+    fetch('/', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams(formData).toString()
+    })
+      .then(function() {
+        formContainer.style.display = 'none';
+        successState.style.display  = 'block';
+      })
+      .catch(function(error) {
+        btn.disabled = false;
+        btnText.textContent = 'Reserve my spot →';
+        alert('Something went wrong. Please try again.');
+        console.error(error);
+      });
   });
 })();
 </script>
