@@ -1,625 +1,867 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html lang="en" data-theme="dark">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ComAI · Build while you Enjoy</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@300..700&display=swap" rel="stylesheet">
-<style>
-/* ===== BRAND TOKENS ===== */
-:root {
-  /* ComAI Brand */
-  --brand-pink:      #C8185A;
-  --brand-pink-dark: #9e1247;
-  --brand-pink-light:#f0d0dc;
-  --brand-gray:      #555555;
-  --brand-gray-dark: #333333;
-  --brand-gray-light:#f0efef;
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ComAI — Build while you Enjoy</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300..700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
 
-  /* Surfaces */
-  --color-bg:      #ffffff;
-  --color-surface: #fafafa;
-  --color-border:  rgba(0,0,0,0.09);
-  --color-divider: rgba(0,0,0,0.06);
-  --color-text:    #1a1a1a;
-  --color-muted:   #666666;
-  --color-faint:   #aaaaaa;
+  <!-- Netlify form -->
+  <form name="comai-waitlist" netlify netlify-honeypot="bot-field" hidden>
+    <input type="text" name="idea"/>
+    <input type="email" name="email"/>
+    <input type="text" name="name"/>
+  </form>
 
-  /* Type */
-  --font-display: 'Instrument Serif', Georgia, serif;
-  --font-body: 'Inter', 'Helvetica Neue', sans-serif;
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --brand:       #c0185a;
+      --brand-h:     #a01248;
+      --brand-glow:  rgba(192,24,90,0.15);
+      --bg:          #0a0908;
+      --s1:          #111010;
+      --s2:          #181614;
+      --s3:          #1f1d1b;
+      --s4:          #272421;
+      --border:      rgba(255,255,255,0.07);
+      --text:        #eceae5;
+      --muted:       #7c7a76;
+      --faint:       #3c3a37;
+      --success:     #22c55e;
+      --font-b:      'Inter', sans-serif;
+      --font-d:      'Instrument Serif', Georgia, serif;
+      --ease:        cubic-bezier(0.16,1,0.3,1);
+      --r:           12px;
+    }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--font-b);
+      background: var(--bg);
+      color: var(--text);
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
 
-  /* Scale */
-  --text-xs:   clamp(0.75rem, 0.7rem + 0.25vw, 0.875rem);
-  --text-sm:   clamp(0.875rem, 0.8rem + 0.35vw, 1rem);
-  --text-base: clamp(1rem, 0.95rem + 0.25vw, 1.125rem);
-  --text-lg:   clamp(1.125rem, 1rem + 0.75vw, 1.5rem);
-  --text-xl:   clamp(1.5rem, 1.2rem + 1.25vw, 2.25rem);
-  --text-2xl:  clamp(2rem, 1.2rem + 2.5vw, 3.5rem);
-  --text-3xl:  clamp(2.5rem, 1rem + 4vw, 5rem);
+    /* ── NAV ── */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 clamp(20px, 5vw, 64px);
+      height: 60px;
+      background: rgba(10,9,8,0.85);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+    }
+    .logo { display:flex;align-items:center;gap:10px;text-decoration:none; }
+    .logo-name { font-family:var(--font-d);font-style:italic;font-size:1.4rem;color:var(--brand);letter-spacing:-.02em; }
+    .logo-tag  { font-size:.67rem;color:var(--muted);letter-spacing:.05em; }
+    .nav-links { display:flex;align-items:center;gap:4px; }
+    .nav-links a {
+      font-size:.82rem;color:var(--muted);text-decoration:none;
+      padding:6px 12px;border-radius:8px;
+      transition:color 150ms,background 150ms;
+    }
+    .nav-links a:hover { color:var(--text);background:var(--s2); }
+    .btn-nav {
+      background:var(--brand);color:#fff;border:none;
+      border-radius:9px;padding:8px 18px;
+      font-size:.82rem;font-weight:600;cursor:pointer;
+      transition:background 150ms var(--ease),transform 120ms;
+      text-decoration:none;display:inline-block;
+    }
+    .btn-nav:hover { background:var(--brand-h); }
+    .btn-nav:active { transform:scale(.97); }
+    @media(max-width:600px){.nav-links a{display:none;}}
 
-  /* Space */
-  --s1:0.25rem;--s2:0.5rem;--s3:0.75rem;--s4:1rem;--s5:1.25rem;
-  --s6:1.5rem;--s8:2rem;--s10:2.5rem;--s12:3rem;--s16:4rem;--s20:5rem;
+    /* ── HERO ── */
+    .hero {
+      max-width: 1200px; margin: 0 auto;
+      padding: clamp(60px,10vw,110px) clamp(20px,5vw,64px) 0;
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 48px; align-items: center;
+    }
+    @media(max-width:860px){ .hero{ grid-template-columns:1fr; } }
 
-  --radius-sm:0.375rem;--radius-md:0.5rem;--radius-lg:0.75rem;
-  --radius-xl:1rem;--radius-full:9999px;
-  --transition: 180ms cubic-bezier(0.16,1,0.3,1);
-  --shadow-sm: 0 1px 3px rgba(0,0,0,0.07);
-  --shadow-md: 0 4px 16px rgba(0,0,0,0.08);
-  --shadow-lg: 0 12px 40px rgba(0,0,0,0.1);
-}
+    .hero-left {}
+    .hero-badge {
+      display:inline-flex;align-items:center;gap:7px;
+      background:var(--s2);border:1px solid var(--border);
+      border-radius:20px;padding:5px 13px;
+      font-size:.72rem;color:var(--muted);margin-bottom:20px;
+    }
+    .hero-badge .dot{width:6px;height:6px;border-radius:50%;background:var(--success);box-shadow:0 0 5px rgba(34,197,94,.5);}
+    h1 {
+      font-family:var(--font-d);font-style:italic;
+      font-size:clamp(2.2rem,5vw,3.6rem);
+      line-height:1.12;color:var(--text);
+      letter-spacing:-.02em;margin-bottom:18px;
+    }
+    h1 em { color:var(--brand);font-style:italic; }
+    .hero-sub {
+      font-size:clamp(.9rem,1.5vw,1.05rem);color:var(--muted);
+      line-height:1.7;max-width:480px;margin-bottom:32px;
+    }
+    .hero-ctas { display:flex;gap:12px;flex-wrap:wrap; }
+    .btn-primary {
+      background:var(--brand);color:#fff;border:none;
+      border-radius:10px;padding:13px 26px;
+      font-size:.9rem;font-weight:600;cursor:pointer;
+      transition:background 150ms var(--ease),transform 120ms,box-shadow 150ms;
+      text-decoration:none;display:inline-block;
+    }
+    .btn-primary:hover{background:var(--brand-h);box-shadow:0 8px 24px rgba(192,24,90,.3);}
+    .btn-primary:active{transform:scale(.97);}
+    .btn-outline {
+      background:transparent;color:var(--text);
+      border:1px solid var(--border);border-radius:10px;
+      padding:13px 26px;font-size:.9rem;cursor:pointer;
+      transition:border-color 150ms,background 150ms;
+      text-decoration:none;display:inline-block;
+    }
+    .btn-outline:hover{border-color:var(--brand);background:var(--s2);}
 
-/* ===== BASE ===== */
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-html{-webkit-font-smoothing:antialiased;scroll-behavior:smooth;}
-body{
-  min-height:100dvh;
-  font-family:var(--font-body);
-  font-size:var(--text-base);
-  color:var(--color-text);
-  background:var(--color-bg);
-  line-height:1.6;
-  display:flex;
-  flex-direction:column;
-}
-img{display:block;max-width:100%;height:auto;}
-input,button,select{font:inherit;color:inherit;}
-h1,h2,h3{text-wrap:balance;line-height:1.15;}
-p{text-wrap:pretty;max-width:72ch;}
-::selection{background:rgba(200,24,90,0.15);color:var(--color-text);}
-:focus-visible{outline:2px solid var(--brand-pink);outline-offset:3px;border-radius:var(--radius-sm);}
-@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important;}}
+    .hero-stats {
+      display:flex;gap:32px;margin-top:36px;padding-top:28px;
+      border-top:1px solid var(--border);
+    }
+    .stat-val{font-family:var(--font-d);font-style:italic;font-size:1.7rem;color:var(--text);}
+    .stat-lbl{font-size:.72rem;color:var(--muted);margin-top:2px;}
 
-/* ===== LAYOUT ===== */
-.wrap{max-width:680px;margin-inline:auto;padding-inline:var(--s6);}
-.wrap--wide{max-width:1100px;margin-inline:auto;padding-inline:var(--s6);}
+    /* ── HERO CHAT PREVIEW ── */
+    .hero-right {}
+    .chat-preview {
+      background:var(--s1);
+      border:1px solid var(--border);
+      border-radius:16px;
+      overflow:hidden;
+      box-shadow:0 32px 80px rgba(0,0,0,.5);
+    }
+    .cp-bar {
+      display:flex;align-items:center;gap:8px;
+      padding:12px 16px;
+      background:var(--s2);border-bottom:1px solid var(--border);
+    }
+    .cp-bar .dot-r{width:10px;height:10px;border-radius:50%;background:var(--success);box-shadow:0 0 6px rgba(34,197,94,.5);animation:pulse 2s infinite;}
+    @keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+    .cp-bar span{font-size:.75rem;color:var(--muted);}
+    .cp-bar strong{font-size:.75rem;color:var(--text);}
+    .cp-msgs { padding:18px;display:flex;flex-direction:column;gap:12px; }
+    .cp-ai {
+      align-self:flex-start;max-width:85%;
+      background:var(--s2);border:1px solid var(--border);
+      border-radius:14px 14px 14px 4px;
+      padding:10px 13px;font-size:.82rem;color:var(--text);line-height:1.6;
+    }
+    .cp-user {
+      align-self:flex-end;max-width:80%;
+      background:rgba(192,24,90,.12);border:1px solid rgba(192,24,90,.25);
+      border-radius:14px 14px 4px 14px;
+      padding:10px 13px;font-size:.82rem;color:var(--text);line-height:1.6;
+    }
+    .cp-card {
+      background:var(--s3);border:1px solid rgba(192,24,90,.25);
+      border-radius:12px;padding:13px;
+      display:flex;flex-direction:column;gap:8px;
+      font-size:.78rem;
+    }
+    .cp-card .cn{font-weight:700;color:var(--text);font-size:.9rem;}
+    .cp-card .ct{color:var(--muted);}
+    .cp-card .cb{display:flex;gap:6px;}
+    .cp-card .cb span{
+      font-size:.67rem;padding:3px 9px;border-radius:20px;
+      background:var(--brand-glow);color:var(--brand);
+      border:1px solid rgba(192,24,90,.2);font-weight:600;
+    }
+    .cp-card .cb .av{background:rgba(34,197,94,.1);color:var(--success);border-color:rgba(34,197,94,.2);}
+    .cp-input {
+      display:flex;align-items:center;gap:8px;
+      padding:10px 14px;margin:0 0 4px;
+      background:var(--s3);border-radius:10px;
+      border:1px solid var(--border);
+    }
+    .cp-input span{font-size:.78rem;color:var(--faint);flex:1;}
+    .cp-send {
+      width:28px;height:28px;border-radius:7px;
+      background:var(--brand);display:flex;align-items:center;justify-content:center;
+    }
 
-/* ===== HEADER ===== */
-header{
-  padding:var(--s6) 0;
-  border-bottom:1px solid var(--color-divider);
-}
-.header-inner{display:flex;align-items:center;justify-content:space-between;}
-.logo-block{display:flex;flex-direction:column;align-items:flex-start;gap:var(--s1);}
-.logo-row{display:flex;align-items:center;gap:var(--s3);}
-.logo-icon{width:36px;height:36px;flex-shrink:0;}
-.logo-wordmark{
-  font-family:var(--font-body);
-  font-size:var(--text-xl);
-  font-weight:700;
-  color:var(--brand-pink);
-  letter-spacing:-0.01em;
-}
-.logo-tagline{
-  font-size:var(--text-xs);
-  color:var(--color-muted);
-  letter-spacing:0.03em;
-  padding-left:calc(36px + var(--s3));
-}
-.header-badge{
-  display:inline-flex;align-items:center;gap:var(--s2);
-  background:var(--brand-pink-light);
-  color:var(--brand-pink-dark);
-  border-radius:var(--radius-full);
-  padding:var(--s1) var(--s4);
-  font-size:var(--text-xs);
-  font-weight:600;
-  letter-spacing:0.04em;
-  text-transform:uppercase;
-}
-.badge-dot{width:6px;height:6px;border-radius:50%;background:var(--brand-pink);animation:pulse 2s infinite;}
-@keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.35;}}
+    /* ── TRUST BAR ── */
+    .trust {
+      max-width:1200px;margin:60px auto 0;
+      padding:20px clamp(20px,5vw,64px);
+      display:flex;align-items:center;justify-content:center;gap:32px;flex-wrap:wrap;
+      border-top:1px solid var(--border);border-bottom:1px solid var(--border);
+    }
+    .trust-item{font-size:.78rem;color:var(--muted);display:flex;align-items:center;gap:7px;}
+    .trust-item svg{color:var(--brand);opacity:.8;}
 
-/* ===== HERO ===== */
-.hero{
-  padding:clamp(var(--s16),10vw,var(--s20)) 0 clamp(var(--s12),8vw,var(--s20));
-  text-align:center;
-}
-.hero-eyebrow{
-  display:inline-block;
-  font-size:var(--text-xs);
-  font-weight:600;
-  color:var(--brand-pink);
-  text-transform:uppercase;
-  letter-spacing:0.1em;
-  margin-bottom:var(--s6);
-}
-.hero h1{
-  font-family:var(--font-display);
-  font-size:var(--text-3xl);
-  font-weight:400;
-  color:var(--color-text);
-  letter-spacing:-0.02em;
-  margin-bottom:var(--s6);
-  max-width:14ch;
-  margin-inline:auto;
-}
-.hero h1 em{font-style:italic;color:var(--brand-pink);}
-.hero-sub{
-  font-size:var(--text-lg);
-  color:var(--color-muted);
-  max-width:48ch;
-  margin-inline:auto;
-  margin-bottom:var(--s10);
-  line-height:1.65;
-  font-weight:350;
-}
+    /* ── HOW IT WORKS ── */
+    .section {
+      max-width:1200px;margin:0 auto;
+      padding:clamp(64px,10vw,96px) clamp(20px,5vw,64px);
+    }
+    .sec-label{font-size:.7rem;text-transform:uppercase;letter-spacing:.1em;color:var(--brand);font-weight:700;margin-bottom:10px;}
+    .sec-title{font-family:var(--font-d);font-style:italic;font-size:clamp(1.7rem,3.5vw,2.6rem);color:var(--text);line-height:1.2;margin-bottom:14px;}
+    .sec-sub{font-size:.95rem;color:var(--muted);max-width:520px;line-height:1.7;margin-bottom:48px;}
 
-/* ===== CAPTURE FORM ===== */
-.capture-card{
-  background:var(--color-surface);
-  border:1px solid var(--color-border);
-  border-radius:var(--radius-xl);
-  padding:clamp(var(--s8),5vw,var(--s12));
-  box-shadow:var(--shadow-md);
-  max-width:520px;
-  margin:0 auto var(--s12);
-  position:relative;
-}
-.capture-card::before{
-  content:'';
-  position:absolute;top:-1px;left:10%;right:10%;height:3px;
-  background:var(--brand-pink);
-  border-radius:0 0 var(--radius-sm) var(--radius-sm);
-  top:0;bottom:auto;
-}
-.capture-title{
-  font-size:var(--text-lg);
-  font-weight:700;
-  color:var(--color-text);
-  margin-bottom:var(--s2);
-  text-align:center;
-}
-.capture-desc{
-  font-size:var(--text-sm);
-  color:var(--color-muted);
-  text-align:center;
-  margin-bottom:var(--s8);
-  line-height:1.6;
-}
-.form-group{
-  display:flex;flex-direction:column;gap:var(--s2);
-  margin-bottom:var(--s5);
-}
-.form-group label{
-  font-size:var(--text-sm);
-  font-weight:500;
-  color:var(--color-text);
-}
-.form-group input,
-.form-group select{
-  width:100%;
-  padding:var(--s3) var(--s4);
-  border:1px solid var(--color-border);
-  border-radius:var(--radius-md);
-  background:var(--color-bg);
-  font-size:var(--text-sm);
-  color:var(--color-text);
-  transition:border-color var(--transition),box-shadow var(--transition);
-  appearance:none;
-  -webkit-appearance:none;
-}
-.form-group input::placeholder{color:var(--color-faint);}
-.form-group input:focus,
-.form-group select:focus{
-  outline:none;
-  border-color:var(--brand-pink);
-  box-shadow:0 0 0 3px rgba(200,24,90,0.1);
-}
-.form-group select{
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23999' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
-  background-repeat:no-repeat;
-  background-position:right var(--s3) center;
-  padding-right:var(--s10);
-}
-.form-row{display:grid;grid-template-columns:1fr 1fr;gap:var(--s4);}
-.form-check{
-  display:flex;align-items:flex-start;gap:var(--s3);
-  margin-bottom:var(--s6);
-}
-.form-check input[type="checkbox"]{
-  width:16px;height:16px;flex-shrink:0;
-  accent-color:var(--brand-pink);
-  cursor:pointer;
-  margin-top:2px;
-}
-.form-check label{
-  font-size:var(--text-xs);
-  color:var(--color-muted);
-  line-height:1.5;
-  cursor:pointer;
-}
-.form-check label a{color:var(--brand-pink);text-decoration:none;}
-.form-check label a:hover{text-decoration:underline;}
-.btn-submit{
-  width:100%;
-  padding:var(--s4) var(--s6);
-  background:var(--brand-pink);
-  color:white;
-  font-size:var(--text-base);
-  font-weight:600;
-  border:none;
-  border-radius:var(--radius-full);
-  cursor:pointer;
-  transition:background var(--transition),box-shadow var(--transition),transform var(--transition);
-  display:flex;align-items:center;justify-content:center;gap:var(--s3);
-}
-.btn-submit:hover{background:var(--brand-pink-dark);box-shadow:var(--shadow-md);}
-.btn-submit:active{transform:scale(0.99);}
-.btn-submit:disabled{opacity:0.6;cursor:not-allowed;transform:none;}
-.form-note{
-  text-align:center;
-  font-size:var(--text-xs);
-  color:var(--color-faint);
-  margin-top:var(--s4);
-}
+    .steps { display:grid;grid-template-columns:repeat(3,1fr);gap:24px; }
+    @media(max-width:700px){.steps{grid-template-columns:1fr;}}
+    .step-card {
+      background:var(--s2);border:1px solid var(--border);
+      border-radius:var(--r);padding:28px;
+      transition:border-color 200ms,box-shadow 200ms;
+    }
+    .step-card:hover{border-color:rgba(192,24,90,.3);box-shadow:0 8px 32px rgba(0,0,0,.3);}
+    .step-num{
+      width:36px;height:36px;border-radius:10px;
+      background:var(--brand-glow);border:1px solid rgba(192,24,90,.2);
+      color:var(--brand);font-weight:700;font-size:.9rem;
+      display:flex;align-items:center;justify-content:center;
+      margin-bottom:16px;
+    }
+    .step-card h3{font-size:1rem;font-weight:700;color:var(--text);margin-bottom:8px;}
+    .step-card p{font-size:.84rem;color:var(--muted);line-height:1.65;}
 
-/* ===== SUCCESS STATE ===== */
-.success-state{
-  display:none;text-align:center;padding:var(--s8) 0;
-}
-.success-icon{
-  width:64px;height:64px;border-radius:50%;
-  background:rgba(200,24,90,0.1);
-  display:flex;align-items:center;justify-content:center;
-  margin:0 auto var(--s5);
-}
-.success-icon svg{color:var(--brand-pink);}
-.success-state h3{font-size:var(--text-xl);color:var(--color-text);margin-bottom:var(--s3);}
-.success-state p{font-size:var(--text-sm);color:var(--color-muted);max-width:38ch;margin-inline:auto;line-height:1.7;}
+    /* ── AGENTS ── */
+    .agents-section { background:var(--s1); }
+    .agents-grid { display:grid;grid-template-columns:repeat(3,1fr);gap:16px; }
+    @media(max-width:700px){.agents-grid{grid-template-columns:1fr 1fr;}}
+    @media(max-width:420px){.agents-grid{grid-template-columns:1fr;}}
+    .agent-card {
+      background:var(--s2);border:1px solid var(--border);
+      border-radius:var(--r);padding:22px;
+      transition:border-color 200ms,transform 200ms;
+    }
+    .agent-card:hover{border-color:rgba(192,24,90,.3);transform:translateY(-2px);}
+    .agent-icon{font-size:1.5rem;margin-bottom:12px;}
+    .agent-card h4{font-size:.92rem;font-weight:700;color:var(--text);margin-bottom:5px;}
+    .agent-card p{font-size:.78rem;color:var(--muted);line-height:1.6;}
+    .agent-badge{display:inline-flex;align-items:center;gap:5px;font-size:.65rem;color:var(--success);margin-top:10px;}
+    .agent-badge .d{width:5px;height:5px;border-radius:50%;background:var(--success);}
 
-/* ===== FEATURES STRIP ===== */
-.features-strip{
-  padding:var(--s10) 0 var(--s16);
-  border-top:1px solid var(--color-divider);
-}
-.features-label{
-  text-align:center;
-  font-size:var(--text-xs);
-  font-weight:600;
-  color:var(--color-faint);
-  text-transform:uppercase;
-  letter-spacing:0.08em;
-  margin-bottom:var(--s8);
-}
-.features-row{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:var(--s6);
-}
-.feature-item{
-  text-align:center;
-  padding:var(--s6);
-  border-radius:var(--radius-lg);
-  border:1px solid var(--color-border);
-  background:var(--color-surface);
-  opacity:0;transform:translateY(16px);
-  transition:opacity .5s ease, transform .5s ease;
-}
-.feature-item.visible{opacity:1;transform:translateY(0);}
-.feature-item svg{
-  width:28px;height:28px;
-  color:var(--brand-pink);
-  margin:0 auto var(--s3);
-  display:block;
-}
-.feature-item h3{font-size:var(--text-sm);font-weight:600;margin-bottom:var(--s2);}
-.feature-item p{font-size:var(--text-xs);color:var(--color-muted);line-height:1.6;max-width:none;}
+    /* ── PRICING ── */
+    .pricing-grid { display:grid;grid-template-columns:repeat(4,1fr);gap:16px; }
+    @media(max-width:900px){.pricing-grid{grid-template-columns:repeat(2,1fr);}}
+    @media(max-width:500px){.pricing-grid{grid-template-columns:1fr;}}
+    .price-card {
+      background:var(--s2);border:1px solid var(--border);
+      border-radius:var(--r);padding:28px 22px;
+      display:flex;flex-direction:column;gap:6px;
+      transition:border-color 200ms,box-shadow 200ms;
+      position:relative;
+    }
+    .price-card.featured{border-color:var(--brand);box-shadow:0 0 0 1px var(--brand),0 16px 48px rgba(192,24,90,.15);}
+    .popular-badge{
+      position:absolute;top:-11px;left:50%;transform:translateX(-50%);
+      background:var(--brand);color:#fff;font-size:.65rem;font-weight:700;
+      padding:3px 12px;border-radius:20px;letter-spacing:.04em;white-space:nowrap;
+    }
+    .price-tier{font-size:.7rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:600;margin-bottom:4px;}
+    .price-amount{font-family:var(--font-d);font-style:italic;font-size:2rem;color:var(--text);}
+    .price-amount span{font-size:.85rem;color:var(--muted);font-style:normal;font-family:var(--font-b);}
+    .price-desc{font-size:.78rem;color:var(--muted);line-height:1.5;margin:8px 0 14px;}
+    .price-features{list-style:none;display:flex;flex-direction:column;gap:8px;flex:1;}
+    .price-features li{font-size:.78rem;color:var(--muted);display:flex;align-items:flex-start;gap:8px;}
+    .price-features li::before{content:"✓";color:var(--success);font-weight:700;flex-shrink:0;margin-top:1px;}
+    .price-btn{
+      margin-top:20px;width:100%;padding:10px;
+      border-radius:9px;font-size:.82rem;font-weight:600;cursor:pointer;
+      transition:all 150ms var(--ease);border:none;
+    }
+    .price-btn.solid{background:var(--brand);color:#fff;}
+    .price-btn.solid:hover{background:var(--brand-h);}
+    .price-btn.ghost{background:transparent;color:var(--text);border:1px solid var(--border);}
+    .price-btn.ghost:hover{border-color:var(--brand);background:var(--s3);}
 
-/* ===== COUNTER ===== */
-.counter-strip{
-  background:var(--brand-pink);
-  color:white;
-  padding:var(--s6) 0;
-  text-align:center;
-  margin-bottom:var(--s12);
-}
-.counter-inner{
-  display:flex;align-items:center;justify-content:center;
-  gap:var(--s10);flex-wrap:wrap;
-}
-.counter-item .num{
-  font-family:var(--font-display);
-  font-size:var(--text-2xl);
-  font-weight:400;
-  display:block;
-  line-height:1;
-}
-.counter-item .lbl{font-size:var(--text-xs);opacity:0.8;text-transform:uppercase;letter-spacing:0.06em;margin-top:var(--s1);}
+    /* ── CHAT + WAITLIST SECTION ── */
+    .cta-section {
+      background: linear-gradient(180deg, var(--s1) 0%, var(--bg) 100%);
+      border-top:1px solid var(--border);
+    }
+    .cta-inner {
+      max-width:900px;margin:0 auto;
+      padding:clamp(60px,9vw,96px) clamp(20px,5vw,64px);
+      display:grid;grid-template-columns:1fr 1fr;
+      gap:48px;align-items:start;
+    }
+    @media(max-width:780px){.cta-inner{grid-template-columns:1fr;}}
 
-/* ===== FOOTER ===== */
-footer{
-  margin-top:auto;
-  border-top:1px solid var(--color-divider);
-  padding:var(--s8) 0;
-}
-.footer-inner{
-  display:flex;align-items:center;justify-content:space-between;
-  gap:var(--s6);flex-wrap:wrap;
-}
-.footer-links{display:flex;gap:var(--s5);}
-.footer-links a{font-size:var(--text-xs);color:var(--color-faint);text-decoration:none;}
-.footer-links a:hover{color:var(--color-muted);}
-.footer-copy{font-size:var(--text-xs);color:var(--color-faint);}
+    /* left: waitlist form */
+    .waitlist-side {}
+    .waitlist-side h2{font-family:var(--font-d);font-style:italic;font-size:clamp(1.6rem,3vw,2.2rem);color:var(--text);line-height:1.2;margin-bottom:10px;}
+    .waitlist-side p{font-size:.88rem;color:var(--muted);line-height:1.7;margin-bottom:28px;}
 
-/* ===== RESPONSIVE ===== */
-@media(max-width:600px){
-  .form-row{grid-template-columns:1fr;}
-  .features-row{grid-template-columns:1fr;}
-  .footer-inner{flex-direction:column;text-align:center;}
-  .footer-links{justify-content:center;}
-  .header-badge{display:none;}
-  .counter-inner{gap:var(--s6);}
-}
-</style>
+    .wl-form{display:flex;flex-direction:column;gap:12px;}
+    .wl-field{display:flex;flex-direction:column;gap:5px;}
+    .wl-field label{font-size:.72rem;color:var(--muted);letter-spacing:.03em;}
+    .wl-field input,.wl-field textarea{
+      background:var(--s2);border:1px solid var(--border);
+      border-radius:9px;padding:11px 14px;
+      font-size:.88rem;color:var(--text);
+      font-family:var(--font-b);outline:none;width:100%;
+      transition:border-color 150ms var(--ease);
+    }
+    .wl-field textarea{resize:none;min-height:80px;}
+    .wl-field input:focus,.wl-field textarea:focus{border-color:var(--brand);}
+    .wl-field input::placeholder,.wl-field textarea::placeholder{color:var(--faint);}
+    .wl-submit{
+      background:var(--brand);color:#fff;border:none;
+      border-radius:10px;padding:13px;width:100%;
+      font-size:.9rem;font-weight:700;cursor:pointer;
+      transition:background 150ms var(--ease),transform 120ms,box-shadow 150ms;
+      margin-top:4px;
+    }
+    .wl-submit:hover{background:var(--brand-h);box-shadow:0 8px 24px rgba(192,24,90,.3);}
+    .wl-submit:active{transform:scale(.98);}
+    .wl-submit:disabled{opacity:.45;cursor:not-allowed;transform:none;box-shadow:none;}
+
+    .wl-success{
+      background:rgba(34,197,94,.07);border:1px solid rgba(34,197,94,.2);
+      border-radius:12px;padding:22px;
+      display:none;flex-direction:column;gap:8px;
+      text-align:center;
+    }
+    .wl-success .ws-icon{font-size:2rem;}
+    .wl-success .ws-title{font-size:1rem;font-weight:700;color:#4ade80;}
+    .wl-success .ws-body{font-size:.84rem;color:var(--muted);line-height:1.6;}
+
+    /* right: mini chat */
+    .chat-side {}
+    .chat-side h3{font-size:.9rem;font-weight:600;color:var(--text);margin-bottom:14px;display:flex;align-items:center;gap:8px;}
+    .chat-side h3 .live{font-size:.65rem;background:rgba(34,197,94,.1);color:var(--success);border:1px solid rgba(34,197,94,.2);border-radius:20px;padding:2px 8px;font-weight:600;}
+
+    .chat-box {
+      background:var(--s1);border:1px solid var(--border);
+      border-radius:14px;overflow:hidden;
+    }
+    .chat-header{
+      display:flex;align-items:center;gap:8px;
+      padding:11px 14px;
+      background:var(--s2);border-bottom:1px solid var(--border);
+      font-size:.75rem;
+    }
+    .chat-header .h-dot{width:7px;height:7px;border-radius:50%;background:var(--success);box-shadow:0 0 5px rgba(34,197,94,.5);animation:pulse 2s infinite;}
+    .chat-header strong{color:var(--text);}
+    .chat-header span{color:var(--muted);}
+
+    #chat-messages{
+      height:280px;overflow-y:auto;
+      padding:16px;display:flex;flex-direction:column;gap:10px;
+      scroll-behavior:smooth;
+    }
+    #chat-messages::-webkit-scrollbar{width:3px;}
+    #chat-messages::-webkit-scrollbar-thumb{background:var(--s3);}
+
+    .cm { display:flex;flex-direction:column;gap:3px; animation:fi 200ms var(--ease) both; }
+    @keyframes fi{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:none}}
+    .cm.user{align-self:flex-end;align-items:flex-end;}
+    .cm.ai  {align-self:flex-start;align-items:flex-start;}
+    .cm-bubble{padding:8px 12px;font-size:.8rem;line-height:1.6;max-width:88%;word-break:break-word;}
+    .cm.user .cm-bubble{background:rgba(192,24,90,.12);border:1px solid rgba(192,24,90,.22);border-radius:13px 13px 4px 13px;color:var(--text);}
+    .cm.ai   .cm-bubble{background:var(--s2);border:1px solid var(--border);border-radius:13px 13px 13px 4px;color:var(--text);}
+    .cm-meta{font-size:.62rem;color:var(--faint);padding:0 3px;}
+
+    .chat-typing{display:flex;align-items:center;gap:4px;padding:10px 13px;background:var(--s2);border:1px solid var(--border);border-radius:13px 13px 13px 4px;align-self:flex-start;animation:fi 200ms both;}
+    .chat-typing span{width:5px;height:5px;border-radius:50%;background:var(--faint);animation:tb 1.2s ease-in-out infinite;}
+    .chat-typing span:nth-child(2){animation-delay:.15s}
+    .chat-typing span:nth-child(3){animation-delay:.3s}
+    @keyframes tb{0%,80%,100%{transform:translateY(0);background:var(--faint)}40%{transform:translateY(-4px);background:var(--brand)}}
+
+    .chat-input-row{
+      display:flex;align-items:flex-end;gap:8px;
+      padding:10px 12px;
+      border-top:1px solid var(--border);
+      background:var(--s1);
+    }
+    #mini-input{
+      flex:1;background:var(--s2);border:1px solid var(--border);
+      border-radius:9px;padding:8px 12px;
+      font-size:.82rem;color:var(--text);
+      font-family:var(--font-b);outline:none;resize:none;
+      max-height:80px;overflow-y:auto;
+      transition:border-color 150ms;
+    }
+    #mini-input::placeholder{color:var(--faint);}
+    #mini-input:focus{border-color:var(--brand);}
+    .mini-send{
+      width:34px;height:34px;border-radius:8px;
+      background:var(--brand);border:none;cursor:pointer;
+      display:flex;align-items:center;justify-content:center;flex-shrink:0;
+      transition:background 150ms,transform 120ms,opacity 150ms;
+    }
+    .mini-send:hover:not(:disabled){background:var(--brand-h);}
+    .mini-send:disabled{opacity:.3;cursor:not-allowed;}
+    .mini-send svg{color:#fff;}
+
+    /* ── FOOTER ── */
+    footer {
+      background:var(--s1);border-top:1px solid var(--border);
+      padding:32px clamp(20px,5vw,64px);
+      display:flex;align-items:center;justify-content:space-between;
+      flex-wrap:wrap;gap:16px;
+    }
+    .foot-logo{font-family:var(--font-d);font-style:italic;font-size:1.2rem;color:var(--brand);}
+    .foot-links{display:flex;gap:20px;flex-wrap:wrap;}
+    .foot-links a{font-size:.78rem;color:var(--muted);text-decoration:none;transition:color 150ms;}
+    .foot-links a:hover{color:var(--text);}
+    .foot-copy{font-size:.72rem;color:var(--faint);}
+  </style>
 </head>
 <body>
 
-<!-- HEADER -->
-<header>
-  <div class="wrap--wide">
-    <div class="header-inner">
-      <div class="logo-block">
-        <div class="logo-row">
-          <!-- Circuit-board robot logo matching the uploaded design -->
-          <svg class="logo-icon" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="ComAI logo icon">
-            <!-- body -->
-            <rect x="22" y="22" width="36" height="36" rx="7" stroke="#555555" stroke-width="3.5" fill="white"/>
-            <!-- eyes -->
-            <circle cx="33" cy="40" r="4" fill="#555555"/>
-            <circle cx="47" cy="40" r="4" fill="#555555"/>
-            <!-- top pins -->
-            <line x1="40" y1="22" x2="40" y2="12" stroke="#555555" stroke-width="3"/>
-            <circle cx="40" cy="10" r="3" stroke="#555555" stroke-width="2.5" fill="white"/>
-            <line x1="32" y1="22" x2="26" y2="12" stroke="#555555" stroke-width="3"/>
-            <circle cx="24" cy="10" r="3" stroke="#555555" stroke-width="2.5" fill="white"/>
-            <line x1="48" y1="22" x2="54" y2="12" stroke="#555555" stroke-width="3"/>
-            <circle cx="56" cy="10" r="3" stroke="#555555" stroke-width="2.5" fill="white"/>
-            <!-- bottom pins -->
-            <line x1="40" y1="58" x2="40" y2="68" stroke="#555555" stroke-width="3"/>
-            <circle cx="40" cy="70" r="3" stroke="#555555" stroke-width="2.5" fill="white"/>
-            <line x1="32" y1="58" x2="26" y2="68" stroke="#555555" stroke-width="3"/>
-            <circle cx="24" cy="70" r="3" stroke="#555555" stroke-width="2.5" fill="white"/>
-            <line x1="48" y1="58" x2="54" y2="68" stroke="#555555" stroke-width="3"/>
-            <circle cx="56" cy="70" r="3" stroke="#555555" stroke-width="2.5" fill="white"/>
-            <!-- left pins -->
-            <line x1="22" y1="34" x2="12" y2="28" stroke="#555555" stroke-width="3"/>
-            <circle cx="10" cy="26" r="3" stroke="#555555" stroke-width="2.5" fill="white"/>
-            <line x1="22" y1="46" x2="12" y2="52" stroke="#555555" stroke-width="3"/>
-            <circle cx="10" cy="54" r="3" stroke="#555555" stroke-width="2.5" fill="white"/>
-            <!-- right pins -->
-            <line x1="58" y1="34" x2="68" y2="28" stroke="#555555" stroke-width="3"/>
-            <circle cx="70" cy="26" r="3" stroke="#555555" stroke-width="2.5" fill="white"/>
-            <line x1="58" y1="46" x2="68" y2="52" stroke="#555555" stroke-width="3"/>
-            <circle cx="70" cy="54" r="3" stroke="#555555" stroke-width="2.5" fill="white"/>
-          </svg>
-          <span class="logo-wordmark">ComAI</span>
-        </div>
-        <span class="logo-tagline">Build while you Enjoy</span>
-      </div>
-      <div class="header-badge" aria-label="Platform status: Coming soon">
-        <span class="badge-dot" aria-hidden="true"></span>
-        Coming Soon
-      </div>
+<!-- NAV -->
+<nav>
+  <a class="logo" href="#">
+    <svg width="28" height="28" viewBox="0 0 32 32" fill="none">
+      <rect x="9" y="9" width="14" height="14" rx="3" stroke="#666" stroke-width="1.5"/>
+      <circle cx="13.5" cy="16" r="1.4" fill="#555"/>
+      <circle cx="18.5" cy="16" r="1.4" fill="#555"/>
+      <line x1="16" y1="9" x2="16" y2="4" stroke="#666" stroke-width="1.3" stroke-linecap="round"/>
+      <line x1="13" y1="9" x2="13" y2="5.5" stroke="#666" stroke-width="1.2" stroke-linecap="round"/>
+      <line x1="19" y1="9" x2="19" y2="5.5" stroke="#666" stroke-width="1.2" stroke-linecap="round"/>
+      <line x1="16" y1="23" x2="16" y2="28" stroke="#666" stroke-width="1.3" stroke-linecap="round"/>
+      <line x1="13" y1="23" x2="13" y2="26.5" stroke="#666" stroke-width="1.2" stroke-linecap="round"/>
+      <line x1="19" y1="23" x2="19" y2="26.5" stroke="#666" stroke-width="1.2" stroke-linecap="round"/>
+      <line x1="9" y1="16" x2="4" y2="16" stroke="#666" stroke-width="1.3" stroke-linecap="round"/>
+      <line x1="9" y1="13" x2="5.5" y2="13" stroke="#666" stroke-width="1.2" stroke-linecap="round"/>
+      <line x1="9" y1="19" x2="5.5" y2="19" stroke="#666" stroke-width="1.2" stroke-linecap="round"/>
+      <line x1="23" y1="16" x2="28" y2="16" stroke="#666" stroke-width="1.3" stroke-linecap="round"/>
+      <line x1="23" y1="13" x2="26.5" y2="13" stroke="#666" stroke-width="1.2" stroke-linecap="round"/>
+      <line x1="23" y1="19" x2="26.5" y2="19" stroke="#666" stroke-width="1.2" stroke-linecap="round"/>
+      <circle cx="16" cy="4" r="1.1" stroke="#666" fill="none"/>
+      <circle cx="16" cy="28" r="1.1" stroke="#666" fill="none"/>
+      <circle cx="4" cy="16" r="1.1" stroke="#666" fill="none"/>
+      <circle cx="28" cy="16" r="1.1" stroke="#666" fill="none"/>
+    </svg>
+    <div>
+      <div class="logo-name">ComAI</div>
+      <div class="logo-tag">Build while you Enjoy</div>
     </div>
+  </a>
+  <div class="nav-links">
+    <a href="#how">How it works</a>
+    <a href="#agents">Agents</a>
+    <a href="#pricing">Pricing</a>
+    <a href="#waitlist" class="btn-nav">Join the Waitlist</a>
   </div>
-</header>
+</nav>
 
 <!-- HERO -->
-<section class="hero">
-  <div class="wrap">
-    <span class="hero-eyebrow">Early access · be first in line</span>
-    <h1>Build your company<br><em>while you enjoy.</em></h1>
-    <p class="hero-sub">
-      ComAI launches soon, an autonomous AI platform that builds, markets, and operates your software company 24/7 so you can focus on what matters.
-    </p>
+<section style="background:var(--bg);">
+  <div class="hero">
+    <div class="hero-left">
+      <div class="hero-badge">
+        <div class="dot"></div>
+        Now accepting early founders worldwide
+      </div>
+      <h1>Your Company, <em>Running</em> While You Sleep.</h1>
+      <p class="hero-sub">Describe your idea. ComAI builds your MVP, markets it, handles support, and grows revenue — autonomously, 24/7. You stay in full control.</p>
+      <div class="hero-ctas">
+        <a href="#waitlist" class="btn-primary">Join the Waitlist</a>
+        <a href="#how" class="btn-outline">See how it works</a>
+      </div>
+      <div class="hero-stats">
+        <div>
+          <div class="stat-val">60 min</div>
+          <div class="stat-lbl">Idea to live MVP</div>
+        </div>
+        <div>
+          <div class="stat-val">6</div>
+          <div class="stat-lbl">AI agents working for you</div>
+        </div>
+        <div>
+          <div class="stat-val">24/7</div>
+          <div class="stat-lbl">Autonomous operation</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero-right">
+      <div class="chat-preview">
+        <div class="cp-bar">
+          <div class="dot-r"></div>
+          <strong>CEO Agent</strong>
+          <span>Online</span>
+        </div>
+        <div class="cp-msgs">
+          <div class="cp-ai">Hello, Founder! Tell me about the business you want to build for the world. 🌍</div>
+          <div class="cp-user">I want to build an AI payroll tool for small businesses globally.</div>
+          <div class="cp-ai">Great idea for the world! Payroll automation for SMEs is a massive opportunity. Let me generate your brand proposal...</div>
+          <div class="cp-card">
+            <div class="cn">PayIQ</div>
+            <div class="ct">Smart payroll for every business on earth</div>
+            <div class="cb">
+              <span class="av">payiq.co — Available</span>
+              <span>SaaS</span>
+              <span>$49/mo</span>
+            </div>
+          </div>
+        </div>
+        <div style="padding:0 12px 12px;">
+          <div class="cp-input">
+            <span>Looks great! Let's build it...</span>
+            <div class="cp-send">
+              <svg width="12" height="12" fill="none" stroke="#fff" stroke-width="2.5" viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </section>
 
-<!-- CAPTURE CARD -->
-<div class="wrap">
-  <div class="capture-card" id="capture-card">
+<!-- TRUST BAR -->
+<div class="trust">
+  <div class="trust-item">
+    <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+    Live MVP in under 60 minutes
+  </div>
+  <div class="trust-item">
+    <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+    No coding required
+  </div>
+  <div class="trust-item">
+    <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+    Full founder control at all times
+  </div>
+  <div class="trust-item">
+    <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+    Transparent audit log of every AI action
+  </div>
+</div>
 
-    <!-- FORM -->
-    <div id="form-container">
-      <h2 class="capture-title">Join the waitlist</h2>
-      <p class="capture-desc">Be among the first to access ComAI when we launch. We'll send you an exclusive early-access invite.</p>
+<!-- HOW IT WORKS -->
+<section id="how" class="section">
+  <div class="sec-label">How it works</div>
+  <h2 class="sec-title">From idea to revenue in three steps</h2>
+  <p class="sec-sub">No dev team. No marketing agency. No customer support hire. ComAI is your entire operations layer.</p>
+  <div class="steps">
+    <div class="step-card">
+      <div class="step-num">1</div>
+      <h3>Describe Your Idea</h3>
+      <p>Chat with the CEO Agent in plain language. Tell it your idea — or say "Surprise me" and it will propose three tailored concepts based on your background.</p>
+    </div>
+    <div class="step-card">
+      <div class="step-num">2</div>
+      <h3>We Build Everything</h3>
+      <p>ComAI provisions your hosting, database, payments, email, domain, and GitHub repo automatically. Your MVP goes live in under 60 minutes — no configuration needed.</p>
+    </div>
+    <div class="step-card">
+      <div class="step-num">3</div>
+      <h3>AI Runs the Company</h3>
+      <p>The CEO Agent runs every night — writing code, publishing content, sending marketing emails, and handling customer support. You approve the big moves and watch your metrics grow.</p>
+    </div>
+  </div>
+</section>
 
-      <form id="interest-form" name="comai-waitlist" method="POST" data-netlify="true" netlify-honeypot="bot-field" novalidate>
-        <input type="hidden" name="form-name" value="comai-waitlist">
-        <p style="display:none;"><label>Don't fill this out if you're human: <input name="bot-field"></label></p>
-        <div class="form-row">
-          <div class="form-group">
-            <label for="fname">First name <span aria-hidden="true" style="color:var(--brand-pink);">*</span></label>
-            <input type="text" id="fname" name="fname" placeholder="Kizza" autocomplete="given-name" required>
-          </div>
-          <div class="form-group">
-            <label for="lname">Last name <span aria-hidden="true" style="color:var(--brand-pink);">*</span></label>
-            <input type="text" id="lname" name="lname" placeholder="Fredrich" autocomplete="family-name" required>
-          </div>
+<!-- AGENTS -->
+<section id="agents" class="agents-section">
+  <div class="section">
+    <div class="sec-label">Your AI Team</div>
+    <h2 class="sec-title">6 specialist agents, working around the clock</h2>
+    <p class="sec-sub">Each agent is an expert in its domain. They collaborate through a structured handoff protocol so nothing falls through the cracks.</p>
+    <div class="agents-grid">
+      <div class="agent-card">
+        <div class="agent-icon">⚙️</div>
+        <h4>Engineering Agent</h4>
+        <p>Writes, tests, and deploys code. Handles bug fixes, feature implementation, and refactors automatically.</p>
+        <div class="agent-badge"><span class="d"></span> Always on</div>
+      </div>
+      <div class="agent-card">
+        <div class="agent-icon">📋</div>
+        <h4>PM Agent</h4>
+        <p>Writes user stories, prioritises the backlog, and proposes roadmap updates based on user feedback.</p>
+        <div class="agent-badge"><span class="d"></span> Always on</div>
+      </div>
+      <div class="agent-card">
+        <div class="agent-icon">📣</div>
+        <h4>Marketing Agent</h4>
+        <p>Creates ad copy, landing page variants, SEO content, and social posts — all on autopilot.</p>
+        <div class="agent-badge"><span class="d"></span> Always on</div>
+      </div>
+      <div class="agent-card">
+        <div class="agent-icon">📈</div>
+        <h4>Ads Agent</h4>
+        <p>Launches and optimises Meta and Google ad campaigns with AI-generated creatives and budgets.</p>
+        <div class="agent-badge"><span class="d"></span> Always on</div>
+      </div>
+      <div class="agent-card">
+        <div class="agent-icon">💬</div>
+        <h4>Support Agent</h4>
+        <p>Handles all inbound customer emails and chat using your company knowledge base. Escalates when needed.</p>
+        <div class="agent-badge"><span class="d"></span> Always on</div>
+      </div>
+      <div class="agent-card">
+        <div class="agent-icon">📊</div>
+        <h4>Analytics Agent</h4>
+        <p>Aggregates metrics, produces weekly summaries, and surfaces anomalies before they become problems.</p>
+        <div class="agent-badge"><span class="d"></span> Always on</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section id="pricing" class="section">
+  <div class="sec-label">Pricing</div>
+  <h2 class="sec-title">Start free, scale as you grow</h2>
+  <p class="sec-sub">Every plan includes managed infrastructure. No hidden fees, no lock-in. You own everything.</p>
+  <div class="pricing-grid">
+    <div class="price-card">
+      <div class="price-tier">Free Trial</div>
+      <div class="price-amount">$0<span> / 14 days</span></div>
+      <p class="price-desc">Full platform access. No credit card required.</p>
+      <ul class="price-features">
+        <li>1 company</li>
+        <li>20 agent tasks</li>
+        <li>All core agents</li>
+        <li>Managed infrastructure</li>
+      </ul>
+      <a href="#waitlist"><button class="price-btn ghost">Get early access</button></a>
+    </div>
+    <div class="price-card">
+      <div class="price-tier">Starter</div>
+      <div class="price-amount">$49<span> / mo</span></div>
+      <p class="price-desc">Perfect for launching your first product.</p>
+      <ul class="price-features">
+        <li>1 company</li>
+        <li>100 agent tasks/month</li>
+        <li>All core agents</li>
+        <li>Custom domain</li>
+      </ul>
+      <a href="#waitlist"><button class="price-btn ghost">Join waitlist</button></a>
+    </div>
+    <div class="price-card featured">
+      <div class="popular-badge">MOST POPULAR</div>
+      <div class="price-tier">Growth</div>
+      <div class="price-amount">$199<span> / mo</span></div>
+      <p class="price-desc">For founders who are scaling fast.</p>
+      <ul class="price-features">
+        <li>3 companies</li>
+        <li>Unlimited tasks</li>
+        <li>Ads Agent enabled</li>
+        <li>Priority support</li>
+      </ul>
+      <a href="#waitlist"><button class="price-btn solid">Join waitlist</button></a>
+    </div>
+    <div class="price-card">
+      <div class="price-tier">Scale</div>
+      <div class="price-amount">$499<span> / mo</span></div>
+      <p class="price-desc">For operators running multiple businesses.</p>
+      <ul class="price-features">
+        <li>10 companies</li>
+        <li>White-label option</li>
+        <li>API access</li>
+        <li>Dedicated infrastructure</li>
+      </ul>
+      <a href="#waitlist"><button class="price-btn ghost">Join waitlist</button></a>
+    </div>
+  </div>
+</section>
+
+<!-- CHAT + WAITLIST -->
+<section id="waitlist" class="cta-section">
+  <div class="cta-inner">
+
+    <!-- WAITLIST FORM -->
+    <div class="waitlist-side">
+      <h2>Join the Waitlist. Your idea is in safe hands.</h2>
+      <p>ComAI is launching Q3 2026. Be among the first founders to get access. Drop your idea and email below — I shall let you know at Launch.</p>
+
+      <div class="wl-form" id="wl-form">
+        <div class="wl-field">
+          <label>Your name</label>
+          <input type="text" id="wl-name" placeholder="Fredrich" />
         </div>
-        <div class="form-group">
-          <label for="email">Email address <span aria-hidden="true" style="color:var(--brand-pink);">*</span></label>
-          <input type="email" id="email" name="email" placeholder="you@example.com" autocomplete="email" required>
+        <div class="wl-field">
+          <label>Your business idea</label>
+          <textarea id="wl-idea" placeholder="Describe the company you want to build for the world..."></textarea>
         </div>
-        <div class="form-group">
-          <label for="role">What best describes you?</label>
-          <select id="role" name="role">
-            <option value="" disabled selected>Select your role…</option>
-            <option value="solo-founder">Solo founder / entrepreneur</option>
-            <option value="developer">Developer with a side project</option>
-            <option value="idea-explorer">Idea explorer</option>
-            <option value="product-manager">Product manager</option>
-            <option value="business-owner">Existing business owner</option>
-            <option value="investor">Investor / VC</option>
-            <option value="other">Other</option>
-          </select>
+        <div class="wl-field">
+          <label>Your email address</label>
+          <input type="email" id="wl-email" placeholder="you@example.com" />
         </div>
-        <div class="form-group">
-          <label for="idea">What's your business idea? <span style="font-weight:400;color:var(--color-faint);">(optional)</span></label>
-          <input type="text" id="idea" name="idea" placeholder="e.g. An AI tutoring app for secondary students">
-        </div>
-        <div class="form-check">
-          <input type="checkbox" id="consent" name="consent" required>
-          <label for="consent">
-            I agree to receive updates about ComAI. We respect your privacy and will never spam you.
-            <a href="#" target="_blank" rel="noopener noreferrer">Privacy policy</a>.
-          </label>
-        </div>
-        <button type="submit" class="btn-submit" id="submit-btn" aria-label="Join the ComAI waitlist">
-          <span id="btn-text">Reserve my spot →</span>
+        <button class="wl-submit" id="wl-submit" onclick="submitForm()">
+          Join the Waitlist 🚀
         </button>
-        <p class="form-note">Free to join · No credit card · Unsubscribe anytime</p>
-      </form>
+      </div>
+
+      <div class="wl-success" id="wl-success">
+        <div class="ws-icon">🚀</div>
+        <div class="ws-title">ComAI is launching soon!</div>
+        <div class="ws-body" id="ws-body">Thanks for joining. Your idea is in safe hands. I shall let you know at Launch.</div>
+      </div>
     </div>
 
-    <!-- SUCCESS STATE -->
-    <div class="success-state" id="success-state" role="status" aria-live="polite">
-      <div class="success-icon" aria-hidden="true">
-        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
-          <path d="M20 6L9 17l-5-5"/>
-        </svg>
-      </div>
-      <h3>You're on the list! 🎉</h3>
-      <p>Thanks for your interest in ComAI. We'll reach out as soon as early access opens. Keep an eye on your inbox.</p>
-    </div>
-
-  </div>
-</div>
-
-<!-- COUNTER STRIP -->
-<div class="counter-strip" aria-label="Platform highlights">
-  <div class="wrap--wide">
-    <div class="counter-inner">
-      <div class="counter-item">
-        <span class="num">&lt;60<span style="font-size:0.6em;vertical-align:middle;margin-left:2px;">min</span></span>
-        <div class="lbl">Idea to live MVP</div>
-      </div>
-      <div class="counter-item">
-        <span class="num">7</span>
-        <div class="lbl">Specialist AI agents</div>
-      </div>
-      <div class="counter-item">
-        <span class="num">$0</span>
-        <div class="lbl">To start, no card needed</div>
-      </div>
-      <div class="counter-item">
-        <span class="num">24/7</span>
-        <div class="lbl">Autonomous operations</div>
+    <!-- MINI CHAT -->
+    <div class="chat-side">
+      <h3>
+        Ask the CEO Agent anything
+        <span class="live">LIVE</span>
+      </h3>
+      <div class="chat-box">
+        <div class="chat-header">
+          <div class="h-dot"></div>
+          <strong>CEO Agent</strong>
+          <span>Ready to help</span>
+        </div>
+        <div id="chat-messages"></div>
+        <div class="chat-input-row">
+          <textarea id="mini-input" rows="1" placeholder="Ask about ComAI..."></textarea>
+          <button class="mini-send" id="mini-send" aria-label="Send">
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.3" viewBox="0 0 24 24">
+              <line x1="22" y1="2" x2="11" y2="13"/>
+              <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+            </svg>
+          </button>
+        </div>
       </div>
     </div>
   </div>
-</div>
-
-<!-- FEATURES STRIP -->
-<div class="features-strip">
-  <div class="wrap--wide">
-    <p class="features-label">What ComAI does for you</p>
-    <div class="features-row">
-      <div class="feature-item">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-        </svg>
-        <h3>Builds your product</h3>
-        <p>The Engineering Agent writes, tests, and deploys real code daily, no developer required on your end.</p>
-      </div>
-      <div class="feature-item">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-          <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
-        </svg>
-        <h3>Runs your marketing</h3>
-        <p>SEO content, ad campaigns, A/B tests, and social posts, all generated and launched autonomously.</p>
-      </div>
-      <div class="feature-item">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-          <circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/>
-        </svg>
-        <h3>Operates 24/7</h3>
-        <p>A Nightly CEO Agent evaluates your business every morning and reports exactly what happened and what comes next.</p>
-      </div>
-    </div>
-  </div>
-</div>
+</section>
 
 <!-- FOOTER -->
 <footer>
-  <div class="wrap--wide">
-    <div class="footer-inner">
-      <div style="display:flex;align-items:center;gap:var(--s2);">
-        <span style="font-weight:700;color:var(--brand-pink);font-size:var(--text-sm);">ComAI</span>
-        <span style="color:var(--color-faint);font-size:var(--text-xs);">· Build while you Enjoy</span>
-      </div>
-      <nav class="footer-links" aria-label="Footer navigation">
-        <a href="#">Privacy</a>
-        <a href="#">Terms</a>
-        <a href="#">Contact</a>
-      </nav>
-      <p class="footer-copy">© 2026 ComAI. All rights reserved.</p>
-    </div>
+  <div class="foot-logo">ComAI</div>
+  <div class="foot-links">
+    <a href="#how">How it works</a>
+    <a href="#agents">Agents</a>
+    <a href="#pricing">Pricing</a>
+    <a href="#waitlist">Waitlist</a>
   </div>
+  <div class="foot-copy">2026 ComAI. Build while you Enjoy.</div>
 </footer>
 
 <script>
-(function(){
-  // Scroll reveal for feature items
-  const observer = new IntersectionObserver((entries)=>{
-    entries.forEach(e=>{
-      if(e.isIntersecting){
-        e.target.classList.add('visible');
-        observer.unobserve(e.target);
-      }
-    });
-  },{threshold:0.15});
-  document.querySelectorAll('.feature-item').forEach(el=>observer.observe(el));
+  // ── WAITLIST FORM ──────────────────────────────────────────
+  async function submitForm() {
+    const name  = document.getElementById('wl-name').value.trim();
+    const idea  = document.getElementById('wl-idea').value.trim();
+    const email = document.getElementById('wl-email').value.trim();
+    const btn   = document.getElementById('wl-submit');
 
-  // Form submission
-  const form = document.getElementById('interest-form');
-  const btn  = document.getElementById('submit-btn');
-  const btnText = document.getElementById('btn-text');
-  const formContainer = document.getElementById('form-container');
-  const successState  = document.getElementById('success-state');
-
-  form.addEventListener('submit', function(e){
-    e.preventDefault();
-
-    // Basic validation
-    const fname   = form.fname.value.trim();
-    const lname   = form.lname.value.trim();
-    const email   = form.email.value.trim();
-    const consent = form.consent.checked;
-
-    if(!fname){ alert('Please enter your first name.'); form.fname.focus(); return; }
-    if(!lname){ alert('Please enter your last name.');  form.lname.focus(); return; }
-    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
-      alert('Please enter a valid email address.'); form.email.focus(); return;
-    }
-    if(!consent){ alert('Please agree to receive updates to continue.'); form.consent.focus(); return; }
+    // basic validation
+    if (!name)  { highlight('wl-name');  return; }
+    if (!idea)  { highlight('wl-idea');  return; }
+    if (!email || !email.includes('@')) { highlight('wl-email'); return; }
 
     btn.disabled = true;
-    btnText.textContent = 'Saving your spot…';
+    btn.textContent = 'Submitting...';
 
-    const formData = new FormData(form);
+    const formData = new FormData();
+    formData.append('form-name', 'comai-waitlist');
+    formData.append('name',  name);
+    formData.append('idea',  idea);
+    formData.append('email', email);
 
-    fetch('/', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: new URLSearchParams(formData).toString()
-    })
-      .then(function() {
-        formContainer.style.display = 'none';
-        successState.style.display  = 'block';
-      })
-      .catch(function(error) {
-        btn.disabled = false;
-        btnText.textContent = 'Reserve my spot →';
-        alert('Something went wrong. Please try again.');
-        console.error(error);
+    try {
+      await fetch('/', {
+        method: 'POST',
+        headers: { 'Accept': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams(formData).toString(),
       });
+    } catch(e) { console.warn('Form note:', e); }
+
+    // show success
+    document.getElementById('wl-form').style.display = 'none';
+    const s = document.getElementById('wl-success');
+    s.style.display = 'flex';
+    document.getElementById('ws-body').innerHTML =
+      'Thanks for joining, <strong>' + name + '</strong>. Your idea is in safe hands.<br><br>' +
+      'I shall let you know at Launch. ComAI is launching Q3 2026. Watch your inbox at <strong>' + email + '</strong>. 📬';
+
+    // also send a chat message
+    addChatMsg('ai', 'Thanks ' + name + '! Your idea "' + (idea.length > 60 ? idea.slice(0,60) + '...' : idea) + '" is now on the waitlist. ComAI is launching soon — I shall let you know. 🚀');
+  }
+
+  function highlight(id) {
+    const el = document.getElementById(id);
+    el.style.borderColor = '#f87171';
+    el.focus();
+    setTimeout(() => el.style.borderColor = '', 1400);
+  }
+
+  // ── MINI CHAT ──────────────────────────────────────────────
+  const chatMsgs  = document.getElementById('chat-messages');
+  const miniInput = document.getElementById('mini-input');
+  const miniSend  = document.getElementById('mini-send');
+
+  const RESPONSES = [
+    "Great question! ComAI handles engineering, marketing, support, and growth — all running 24/7 on your behalf. You keep full control.",
+    "The CEO Agent runs every night, evaluates your business state, and plans tomorrow's work. You wake up to a daily report with metrics and actions taken.",
+    "ComAI provisions hosting, database, payments, email, domain, and GitHub automatically — zero configuration needed from your side.",
+    "We are targeting launch in Q3 2026. Join the waitlist on the left and you will be among the first founders to get access! 🚀",
+    "Your idea is the foundation of everything. Once onboarded, the Engineering Agent starts building your MVP immediately — first version live in under 60 minutes.",
+    "ComAI supports any digital or SaaS business idea. Whether it is a marketplace, productivity tool, or AI product — if it runs on software, we can build and operate it.",
+    "Every agent action is logged with a full audit trail. You can review, approve, reject, or roll back any action at any time. Full transparency, always.",
+    "Pricing starts at $0 for a 14-day free trial — no credit card required. Then from $49/month for one company with 100 agent tasks per month.",
+  ];
+
+  let rIdx = 0;
+
+  // initial greeting
+  setTimeout(() => {
+    addChatMsg('ai', 'Hello! I am the ComAI CEO Agent. Ask me anything about the platform, or describe your idea and I will tell you how we can build it. 🌍');
+  }, 600);
+
+  miniInput.addEventListener('input', () => {
+    miniInput.style.height = 'auto';
+    miniInput.style.height = Math.min(miniInput.scrollHeight, 80) + 'px';
+    miniSend.disabled = !miniInput.value.trim();
   });
-})();
+
+  miniInput.addEventListener('keydown', e => {
+    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendChat(); }
+  });
+  miniSend.addEventListener('click', sendChat);
+  miniSend.disabled = true;
+
+  function sendChat() {
+    const text = miniInput.value.trim();
+    if (!text) return;
+    addChatMsg('user', text);
+    miniInput.value = '';
+    miniInput.style.height = 'auto';
+    miniSend.disabled = true;
+
+    const t = addTyping();
+    const delay = 900 + Math.random() * 700;
+    setTimeout(() => {
+      t.remove();
+      addChatMsg('ai', RESPONSES[rIdx % RESPONSES.length]);
+      rIdx++;
+    }, delay);
+  }
+
+  function addChatMsg(role, text) {
+    const wrap = document.createElement('div');
+    wrap.className = 'cm ' + role;
+    const bubble = document.createElement('div');
+    bubble.className = 'cm-bubble';
+    bubble.textContent = text;
+    const meta = document.createElement('div');
+    meta.className = 'cm-meta';
+    meta.textContent = role === 'user' ? 'You' : 'CEO Agent';
+    wrap.appendChild(bubble);
+    wrap.appendChild(meta);
+    chatMsgs.appendChild(wrap);
+    chatMsgs.scrollTop = chatMsgs.scrollHeight;
+  }
+
+  function addTyping() {
+    const el = document.createElement('div');
+    el.className = 'cm';
+    const t = document.createElement('div');
+    t.className = 'chat-typing';
+    t.innerHTML = '<span></span><span></span><span></span>';
+    el.appendChild(t);
+    chatMsgs.appendChild(el);
+    chatMsgs.scrollTop = chatMsgs.scrollHeight;
+    return el;
+  }
 </script>
 </body>
 </html>
